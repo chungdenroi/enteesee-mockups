@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enteesee — Phòng Họp &amp; Điều Hành</title>
+<style>
+  :root{
+    --bg:#FAFAFA;
+    --surface:#FFFFFF;
+    --border:#E7E7EA;
+    --border-soft:#EFEFF1;
+    --text:#17181C;
+    --muted:#6B7280;
+    --faint:#9CA3AF;
+    --accent:#4F46E5;
+    --accent-soft:#EEF2FF;
+    --accent-hover:#4338CA;
+    --green:#16A34A;
+    --green-soft:#F0FDF4;
+    --amber:#D97706;
+    --amber-soft:#FFFBEB;
+    --gray-dot:#D1D5DB;
+    --radius:12px;
+    --shadow:0 1px 2px rgba(16,24,40,.05);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    font-size:14px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  input,textarea{font:inherit;color:inherit}
+  ::selection{background:var(--accent-soft)}
+  svg.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  svg.ic.sm{width:16px;height:16px}
+
+  /* ============ LAYOUT ============ */
+  .app{display:flex;min-height:100vh}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:248px;flex:none;
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    display:flex;flex-direction:column;
+    position:sticky;top:0;height:100vh;
+    padding:24px 16px 16px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;padding:0 8px 24px}
+  .brand-mark{
+    width:36px;height:36px;flex:none;border-radius:10px;
+    background:var(--text);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;letter-spacing:-.02em;
+  }
+  .brand-name{font-size:15px;font-weight:650;letter-spacing:-.01em;line-height:1.25}
+  .brand-sub{font-size:12px;color:var(--muted);line-height:1.35}
+  .nav-label{
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--faint);padding:0 8px;margin:8px 0 8px;
+  }
+  .nav{display:flex;flex-direction:column;gap:2px}
+  .nav-btn{
+    display:flex;align-items:center;gap:12px;width:100%;
+    padding:8px;border-radius:8px;
+    font-size:14px;font-weight:500;color:var(--muted);
+    text-align:left;transition:background .15s ease,color .15s ease;
+  }
+  .nav-btn:hover{background:var(--bg);color:var(--text)}
+  .nav-btn.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .nav-btn .badge{
+    margin-left:auto;font-size:11px;font-weight:600;line-height:1;
+    background:var(--accent);color:#fff;border-radius:999px;padding:3px 7px;
+  }
+  .nav-btn:not(.active) .badge{background:#E5E7EB;color:var(--muted)}
+  .sidebar-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--border-soft)}
+  .foot-user{display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;transition:background .15s ease}
+  .foot-user:hover{background:var(--bg)}
+  .foot-user .who{min-width:0}
+  .foot-user .who b{display:block;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .foot-user .who span{display:block;font-size:12px;color:var(--muted);line-height:1.3}
+
+  /* ============ AVATAR & STATUS ============ */
+  .avatar{
+    border-radius:50%;flex:none;position:relative;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-weight:600;letter-spacing:.01em;color:#fff;user-select:none;
+  }
+  .av-40{width:40px;height:40px;font-size:13px}
+  .av-36{width:36px;height:36px;font-size:12px}
+  .av-32{width:32px;height:32px;font-size:11px}
+  .c-dark{background:#17181C}
+  .c-indigo{background:#4F46E5}
+  .c-slate{background:#64748B}
+  .c-teal{background:#0F766E}
+  .c-plum{background:#7C3AED}
+  .dot{
+    width:9px;height:9px;border-radius:50%;flex:none;display:inline-block;
+  }
+  .dot.on{background:var(--green)}
+  .dot.recent{background:#F59E0B}
+  .dot.off{background:var(--gray-dot)}
+  .avatar .dot{
+    position:absolute;right:-1px;bottom:-1px;
+    border:2px solid var(--surface);width:11px;height:11px;box-sizing:content-box;background-clip:padding-box;
+  }
+  .status-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:500;line-height:1;
+    padding:5px 10px;border-radius:999px;white-space:nowrap;
+  }
+  .status-pill.on{background:var(--green-soft);color:#15803D}
+  .status-pill.recent{background:var(--amber-soft);color:var(--amber)}
+  .status-pill.off{background:#F3F4F6;color:var(--muted)}
+
+  /* ============ MAIN ============ */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(250,250,250,.85);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:16px;
+    padding:12px 32px;
+  }
+  .topbar-title{font-size:14px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+  .topbar-title span{color:var(--faint);font-weight:400;margin:0 2px}
+  .topbar-title em{font-style:normal;color:var(--muted);font-weight:500}
+  .search{
+    margin-left:auto;display:flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:7px 12px;width:264px;color:var(--faint);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);color:var(--muted)}
+  .search input{border:none;outline:none;background:none;width:100%;font-size:13px;color:var(--text)}
+  .search input::placeholder{color:var(--faint)}
+  .icon-btn{
+    width:36px;height:36px;flex:none;border-radius:8px;position:relative;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--surface);border:1px solid var(--border);color:var(--muted);
+    transition:color .15s ease,border-color .15s ease,background .15s ease;
+  }
+  .icon-btn:hover{color:var(--text);border-color:#D4D4D8}
+  .icon-btn .ping{
+    position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;
+    background:var(--accent);border:1.5px solid var(--surface);
+  }
+  .content{padding:32px;width:100%;max-width:1120px;margin:0 auto}
+  .view{display:none;animation:fade .18s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+
+  .page-head{margin-bottom:24px}
+  .page-head h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+  .page-head p{color:var(--muted);font-size:14px;margin-top:4px}
+  .section-label{
+    font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--faint);margin:32px 0 12px;
+  }
+  .section-label:first-of-type{margin-top:0}
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+
+  /* ============ OVERVIEW: STATS ============ */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat{padding:20px;transition:border-color .15s ease}
+  .stat:hover{border-color:#D4D4D8}
+  .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .stat-ic{
+    width:36px;height:36px;border-radius:8px;background:var(--bg);
+    border:1px solid var(--border-soft);color:var(--muted);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stat-num{font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1}
+  .stat-name{font-size:13px;color:var(--muted);margin-top:6px;font-weight:500}
+  .stat-delta{font-size:12px;font-weight:600;color:#15803D}
+  .stat-delta.neutral{color:var(--faint);font-weight:500}
+  .stat-delta.warn{color:var(--amber)}
+
+  /* ============ OVERVIEW: PRESENCE ============ */
+  .presence{padding:8px 20px}
+  .presence-row{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .person-chip{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 14px 8px 8px;border-radius:999px;
+    border:1px solid transparent;transition:background .15s ease,border-color .15s ease;
+  }
+  .person-chip:hover{background:var(--bg);border-color:var(--border-soft)}
+  .person-chip .p-name{font-size:13px;font-weight:600;line-height:1.3}
+  .person-chip .p-time{font-size:12px;color:var(--muted);line-height:1.3;display:flex;align-items:center;gap:6px}
+
+  /* ============ OVERVIEW: PEOPLE GRID ============ */
+  .people{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .person-card{padding:20px;transition:border-color .15s ease}
+  .person-card:hover{border-color:#D4D4D8}
+  .person-head{display:flex;align-items:flex-start;gap:12px}
+  .person-head .who{min-width:0;flex:1}
+  .person-head .who b{font-size:14px;font-weight:650;display:block;line-height:1.35}
+  .person-head .who span{font-size:13px;color:var(--muted);display:block;line-height:1.4}
+  .person-task{
+    margin-top:16px;padding-top:16px;border-top:1px solid var(--border-soft);
+  }
+  .person-task .t-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+  .person-task .t-name{font-size:13px;font-weight:550;margin-top:4px;line-height:1.45}
+  .person-task .t-none{font-size:13px;color:var(--faint);margin-top:4px}
+  .progress{height:6px;border-radius:999px;background:#F1F1F4;overflow:hidden;margin-top:10px}
+  .progress i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+  .progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+  .progress-meta b{color:var(--text);font-weight:600}
+
+  /* ============ OVERVIEW: ACTIVITY ============ */
+  .activity{padding:8px 20px}
+  .act-row{display:flex;gap:12px;padding:12px 0;align-items:flex-start}
+  .act-row + .act-row{border-top:1px solid var(--border-soft)}
+  .act-dot{
+    width:28px;height:28px;flex:none;border-radius:50%;
+    background:var(--bg);border:1px solid var(--border-soft);color:var(--muted);
+    display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .act-dot svg{width:14px;height:14px}
+  .act-body{flex:1;min-width:0;font-size:13px;line-height:1.5}
+  .act-body b{font-weight:600}
+  .act-time{font-size:12px;color:var(--faint);white-space:nowrap;padding-top:2px}
+
+  /* ============ MEETING ============ */
+  .chat-card{display:flex;flex-direction:column;overflow:hidden}
+  .chat-head{
+    display:flex;align-items:center;gap:12px;
+    padding:16px 20px;border-bottom:1px solid var(--border);
+  }
+  .chat-head .who{flex:1;min-width:0}
+  .chat-head .who b{font-size:14px;font-weight:650;display:block;line-height:1.3}
+  .chat-head .who span{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;line-height:1.4}
+  .chat-body{padding:24px 20px 8px;display:flex;flex-direction:column;gap:24px;background:var(--surface)}
+  .day-sep{display:flex;align-items:center;gap:16px;color:var(--faint);font-size:12px;font-weight:500}
+  .day-sep::before,.day-sep::after{content:"";flex:1;height:1px;background:var(--border-soft)}
+  .msg{display:flex;gap:12px;max-width:720px}
+  .msg .m-body{min-width:0}
+  .msg .m-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+  .msg .m-name{font-size:13px;font-weight:650}
+  .msg .m-role{font-size:12px;color:var(--faint)}
+  .msg .m-time{font-size:12px;color:var(--faint);margin-left:auto}
+  .msg .m-text{font-size:14px;line-height:1.6;color:#26272C}
+  .assign{
+    margin-top:10px;border:1px solid #DDD6FE;border-left:3px solid var(--accent);
+    background:#FAFAFF;border-radius:10px;padding:16px;
+  }
+  .assign-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);
+    padding:4px 8px;border-radius:6px;line-height:1;
+  }
+  .assign h4{font-size:14px;font-weight:650;margin-top:10px;letter-spacing:-.01em}
+  .assign p{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.55}
+  .assign-rows{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:12px;padding-top:12px;border-top:1px solid #E9E7FD}
+  .assign-rows div{font-size:12px;color:var(--muted)}
+  .assign-rows b{color:var(--text);font-weight:600}
+  .assign-foot{display:flex;align-items:center;gap:12px;margin-top:12px}
+  .assign-foot .progress{flex:1;margin-top:0}
+  .assign-foot span{font-size:12px;color:var(--muted);white-space:nowrap}
+  .assign-foot span b{color:var(--text)}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;border-radius:8px;
+    padding:8px 14px;transition:background .15s ease,color .15s ease,border-color .15s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-hover)}
+  .btn-ghost{border:1px solid var(--border);color:var(--muted);background:var(--surface)}
+  .btn-ghost:hover{color:var(--text);border-color:#D4D4D8}
+  .composer{
+    border-top:1px solid var(--border);padding:16px 20px;
+    display:flex;align-items:flex-end;gap:8px;background:var(--surface);
+  }
+  .composer-box{
+    flex:1;display:flex;align-items:center;gap:8px;
+    border:1px solid var(--border);border-radius:10px;padding:4px 4px 4px 8px;
+    transition:border-color .15s ease, box-shadow .15s ease;background:var(--surface);
+  }
+  .composer-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .composer-box textarea{
+    flex:1;border:none;outline:none;resize:none;background:none;
+    font-size:14px;line-height:1.5;max-height:96px;padding:6px 4px;
+  }
+  .composer-box textarea::placeholder{color:var(--faint)}
+  .attach-btn{
+    width:32px;height:32px;flex:none;border-radius:8px;color:var(--faint);
+    display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,color .15s ease;
+  }
+  .attach-btn:hover{background:var(--bg);color:var(--text)}
+  .send-btn{
+    height:40px;padding:0 18px;border-radius:10px;flex:none;
+  }
+  .composer-hint{font-size:12px;color:var(--faint);padding:0 20px 16px;background:var(--surface)}
+
+  /* ============ BOARD ============ */
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+  .col-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:0 2px}
+  .col-dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .col-name{font-size:12px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .col-count{
+    font-size:11px;font-weight:600;color:var(--muted);background:#F1F1F4;
+    border-radius:999px;padding:2px 8px;line-height:1.4;
+  }
+  .task{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:16px;margin-bottom:12px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .task:hover{border-color:#D4D4D8}
+  .task h4{font-size:13.5px;font-size:14px;font-weight:600;line-height:1.45;letter-spacing:-.005em}
+  .task .t-desc{font-size:12.5px;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .task .progress{margin-top:14px}
+  .task-meta{
+    display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;
+    border-top:1px solid var(--border-soft);
+  }
+  .task-meta .who{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:550;color:var(--muted);min-width:0}
+  .task-meta .who span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .task-due{margin-left:auto;font-size:12px;color:var(--faint);display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .task-due.overdue{color:#DC2626;font-weight:600}
+  .tag{
+    display:inline-block;font-size:11px;font-weight:600;line-height:1;
+    padding:4px 8px;border-radius:6px;margin-bottom:10px;
+  }
+  .tag.indigo{background:var(--accent-soft);color:var(--accent)}
+  .tag.gray{background:#F3F4F6;color:var(--muted)}
+  .tag.green{background:var(--green-soft);color:#15803D}
+  .tag.amber{background:var(--amber-soft);color:var(--amber)}
+  .done-check{color:var(--green);display:inline-flex;vertical-align:-3px;margin-right:6px}
+
+  /* ============ ORG ============ */
+  .org{padding:32px 24px;overflow-x:auto}
+  .org-tree{display:flex;flex-direction:column;align-items:center;min-width:520px}
+  .org-node{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:14px 18px;display:flex;align-items:center;gap:12px;
+    min-width:248px;transition:border-color .15s ease;
+  }
+  .org-node:hover{border-color:#D4D4D8}
+  .org-node .who b{font-size:13.5px;font-size:14px;font-weight:650;display:block;line-height:1.3}
+  .org-node .who span{font-size:12px;color:var(--muted);display:block;line-height:1.35}
+  .org-node.lead{border-color:#C7D2FE;background:#FDFDFF}
+  .org-v{width:1px;height:24px;background:#D4D4D8}
+  .org-branch{display:flex;flex-direction:column;align-items:center;width:100%}
+  .org-h-wrap{display:flex;flex-direction:column;align-items:center}
+  .org-children{display:flex;gap:16px;position:relative;padding-top:24px}
+  .org-children::before{content:"";position:absolute;top:0;left:50%;width:1px;height:24px;background:#D4D4D8}
+  .org-child{display:flex;flex-direction:column;align-items:center;position:relative}
+  .org-child::before{content:"";position:absolute;top:-24px;left:50%;width:1px;height:24px;background:#D4D4D8}
+  .org-child::after{content:"";position:absolute;top:-24px;height:1px;background:#D4D4D8}
+  .org-child:first-child::after{left:50%;right:-8px}
+  .org-child:last-child::after{right:50%;left:-8px}
+  .org-child:only-child::after{display:none}
+  .org-child:not(:first-child):not(:last-child)::after{left:-8px;right:-8px}
+  .org-note{text-align:center;font-size:12px;color:var(--faint);margin-top:24px}
+
+  /* ============ STAFF LIST ============ */
+  .staff{overflow:hidden}
+  .staff-row{
+    display:flex;align-items:center;gap:12px;padding:14px 20px;
+    transition:background .15s ease;
+  }
+  .staff-row:hover{background:#FCFCFD}
+  .staff-row + .staff-row{border-top:1px solid var(--border-soft)}
+  .staff-row .who{flex:1;min-width:0}
+  .staff-row .who b{font-size:14px;font-weight:600;display:block;line-height:1.35}
+  .staff-row .who span{font-size:13px;color:var(--muted);display:block;line-height:1.4}
+  .staff-row .last{font-size:12px;color:var(--faint);white-space:nowrap;text-align:right}
+
+  /* ============ SETTINGS ============ */
+  .settings{overflow:hidden}
+  .set-row{
+    display:flex;align-items:center;gap:16px;padding:16px 20px;
+  }
+  .set-row + .set-row{border-top:1px solid var(--border-soft)}
+  .set-row .txt{flex:1;min-width:0}
+  .set-row .txt b{font-size:14px;font-weight:600;display:block;line-height:1.4}
+  .set-row .txt span{font-size:13px;color:var(--muted);display:block;line-height:1.45;margin-top:1px}
+  .switch{position:relative;width:40px;height:22px;flex:none;cursor:pointer}
+  .switch input{opacity:0;width:0;height:0;position:absolute}
+  .switch .track{
+    position:absolute;inset:0;border-radius:999px;background:#E5E7EB;transition:background .15s ease;
+  }
+  .switch .track::after{
+    content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.2);transition:transform .15s ease;
+  }
+  .switch input:checked + .track{background:var(--accent)}
+  .switch input:checked + .track::after{transform:translateX(18px)}
+  .switch input:focus-visible + .track{box-shadow:0 0 0 3px var(--accent-soft)}
+  .select{
+    border:1px solid var(--border);border-radius:8px;background:var(--surface);
+    font-size:13px;font-weight:550;padding:7px 10px;color:var(--text);cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .select:hover{border-color:#D4D4D8}
+
+  /* ============ BOTTOM NAV (mobile) ============ */
+  .bottom-nav{
+    display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+    border-top:1px solid var(--border);
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav .row{display:flex}
+  .bottom-nav button{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;border-radius:8px;font-size:10.5px;font-size:11px;font-weight:550;
+    color:var(--faint);transition:color .15s ease,background .15s ease;position:relative;
+  }
+  .bottom-nav button:hover{color:var(--text)}
+  .bottom-nav button.active{color:var(--accent);font-weight:650}
+  .bottom-nav button .bdot{
+    position:absolute;top:4px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--accent);
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1020px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .board{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:760px){
+    .sidebar{display:none}
+    .bottom-nav{display:block}
+    .content{padding:24px 16px 96px}
+    .topbar{padding:12px 16px}
+    .search{display:none}
+    .topbar-title span,.topbar-title em{display:none}
+    .people{grid-template-columns:1fr}
+    .board{grid-template-columns:1fr}
+    .page-head h1{font-size:21px}
+    .presence{padding:4px 12px}
+    .activity{padding:4px 16px}
+    .staff-row .last{display:none}
+    .msg .m-role{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SVG SPRITE: icon nét mảnh đơn sắc ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></symbol>
+    <symbol id="i-org" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M12 12H6v4M12 12h6v4"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.5 0-3-.4-4.2-1.1L3 20l1.1-5.3A8.5 8.5 0 1 1 21 11.5Z"/></symbol>
+    <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="3" width="5.5" height="18" rx="1"/><rect x="9.75" y="3" width="5.5" height="12" rx="1"/><rect x="16.5" y="3" width="5.5" height="8" rx="1" transform="translate(-1 0)"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><path d="M16 4.7a3.5 3.5 0 0 1 0 6.6M17.8 15.3c2 .6 3.3 2.2 3.8 4.7"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2 17 7M7 17l-1.8 1.8"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13.5 6 9.5"/><path d="M10 19a2.2 2.2 0 0 0 4 0"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20.5 11.8 11 21.3a5.25 5.25 0 0 1-7.4-7.4l9-9a3.5 3.5 0 0 1 5 5l-8.6 8.6a1.75 1.75 0 0 1-2.5-2.5l7.9-7.9"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.8-4.8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8 21 3Z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4.5c4-2 7 2 14 0v9c-7 2-10-2-14 0"/></symbol>
+    <symbol id="i-task" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div>
+        <div class="brand-name">Enteesee</div>
+        <div class="brand-sub">Phòng Họp &amp; Điều Hành</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Điều hướng</div>
+    <nav class="nav" aria-label="Chính">
+      <button class="nav-btn active" data-view="overview"><svg class="ic"><use href="#i-home"/></svg>Tổng quan</button>
+      <button class="nav-btn" data-view="org"><svg class="ic"><use href="#i-org"/></svg>Sơ đồ</button>
+      <button class="nav-btn" data-view="meeting"><svg class="ic"><use href="#i-chat"/></svg>Phòng họp<span class="badge">1</span></button>
+      <button class="nav-btn" data-view="board"><svg class="ic"><use href="#i-board"/></svg>Công việc<span class="badge">1</span></button>
+      <button class="nav-btn" data-view="staff"><svg class="ic"><use href="#i-users"/></svg>Nhân viên</button>
+      <button class="nav-btn" data-view="settings"><svg class="ic"><use href="#i-gear"/></svg>Cài đặt</button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="foot-user">
+        <span class="avatar av-36 c-dark">C<span class="dot on"></span></span>
+        <div class="who">
+          <b>Chung</b>
+          <span>Giám đốc</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title">Enteesee <span>/</span> <em id="crumb">Tổng quan</em></div>
+      <label class="search">
+        <svg class="ic sm"><use href="#i-search"/></svg>
+        <input type="text" placeholder="Tìm nhân viên, công việc…" aria-label="Tìm kiếm">
+      </label>
+      <button class="icon-btn" aria-label="Thông báo"><svg class="ic"><use href="#i-bell"/></svg><span class="ping"></span></button>
+      <span class="avatar av-36 c-dark">C</span>
+    </header>
+
+    <main class="content">
+
+      <!-- ================= 1. TỔNG QUAN ================= -->
+      <section class="view active" id="view-overview">
+        <div class="page-head">
+          <h1>Tổng quan</h1>
+          <p>Tình hình hoạt động của công ty trong hôm nay, thứ Tư ngày 21 tháng 10.</p>
+        </div>
+
+        <div class="stats">
+          <div class="card stat">
+            <div class="stat-top"><span class="stat-ic"><svg class="ic"><use href="#i-users"/></svg></span><span class="stat-delta neutral">Toàn công ty</span></div>
+            <div class="stat-num">5</div>
+            <div class="stat-name">Nhân viên</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-top"><span class="stat-ic"><svg class="ic"><use href="#i-home"/></svg></span><span class="stat-delta">Đang trong phòng họp</span></div>
+            <div class="stat-num">3</div>
+            <div class="stat-name">Đang hoạt động</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-top"><span class="stat-ic"><svg class="ic"><use href="#i-board"/></svg></span><span class="stat-delta neutral">Trên bảng việc</span></div>
+            <div class="stat-num">3</div>
+            <div class="stat-name">Việc đang làm</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-top"><span class="stat-ic"><svg class="ic"><use href="#i-clock"/></svg></span><span class="stat-delta warn">Cần xử lý</span></div>
+            <div class="stat-num">1</div>
+            <div class="stat-name">Chờ duyệt</div>
+          </div>
+        </div>
+
+        <div class="section-label">Hiện diện trong phòng họp</div>
+        <div class="card presence">
+          <div class="presence-row">
+            <div class="person-chip">
+              <span class="avatar av-36 c-dark">C<span class="dot on"></span></span>
+              <div><div class="p-name">Chung</div><div class="p-time"><span class="dot on"></span>Đang hoạt động</div></div>
+            </div>
+            <div class="person-chip">
+              <span class="avatar av-36 c-indigo">M<span class="dot on"></span></span>
+              <div><div class="p-name">Muse</div><div class="p-time"><span class="dot on"></span>Đang hoạt động</div></div>
+            </div>
+            <div class="person-chip">
+              <span class="avatar av-36 c-slate">H<span class="dot recent"></span></span>
+              <div><div class="p-name">Hùng</div><div class="p-time"><span class="dot recent"></span>Hoạt động 4 phút trước</div></div>
+            </div>
+            <div class="person-chip">
+              <span class="avatar av-36 c-teal">T<span class="dot recent"></span></span>
+              <div><div class="p-name">Tuấn</div><div class="p-time"><span class="dot recent"></span>Hoạt động 9 phút trước</div></div>
+            </div>
+            <div class="person-chip">
+              <span class="avatar av-36 c-plum">L<span class="dot off"></span></span>
+              <div><div class="p-name">Linh</div><div class="p-time"><span class="dot off"></span>Chưa từng vào phòng họp</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Đội ngũ</div>
+        <div class="people">
+          <div class="card person-card">
+            <div class="person-head">
+              <span class="avatar av-40 c-dark">C<span class="dot on"></span></span>
+              <div class="who"><b>Chung</b><span>Giám đốc</span></div>
+              <span class="status-pill on"><span class="dot on"></span>Đang hoạt động</span>
+            </div>
+            <div class="person-task">
+              <div class="t-label">Đang phụ trách</div>
+              <div class="t-none">Điều hành chung và phê duyệt công việc của toàn đội.</div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="person-head">
+              <span class="avatar av-40 c-indigo">M<span class="dot on"></span></span>
+              <div class="who"><b>Muse</b><span>Phó giám đốc điều hành</span></div>
+              <span class="status-pill on"><span class="dot on"></span>Đang hoạt động</span>
+            </div>
+            <div class="person-task">
+              <div class="t-label">Vừa hoàn thành</div>
+              <div class="t-name">Dựng phòng họp trực tuyến</div>
+              <div class="progress"><i style="width:100%"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>100%</b></div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="person-head">
+              <span class="avatar av-40 c-slate">H<span class="dot recent"></span></span>
+              <div class="who"><b>Hùng</b><span>Trưởng phòng</span></div>
+              <span class="status-pill recent"><span class="dot recent"></span>Vừa hoạt động</span>
+            </div>
+            <div class="person-task">
+              <div class="t-label">Đang làm</div>
+              <div class="t-name">Lên kế hoạch phân công đội dự án</div>
+              <div class="progress"><i style="width:40%"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>40%</b></div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="person-head">
+              <span class="avatar av-40 c-teal">T<span class="dot recent"></span></span>
+              <div class="who"><b>Tuấn</b><span>Developer</span></div>
+              <span class="status-pill recent"><span class="dot recent"></span>Vừa hoạt động</span>
+            </div>
+            <div class="person-task">
+              <div class="t-label">Việc tiếp theo</div>
+              <div class="t-name">Thiết kế lại giao diện phòng họp</div>
+              <div class="progress-meta" style="margin-top:8px"><span>Trạng thái</span><b>Chờ nhận việc</b></div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="person-head">
+              <span class="avatar av-40 c-plum">L<span class="dot off"></span></span>
+              <div class="who"><b>Linh</b><span>Tester</span></div>
+              <span class="status-pill off"><span class="dot off"></span>Chưa vào phòng họp</span>
+            </div>
+            <div class="person-task">
+              <div class="t-label">Việc tiếp theo</div>
+              <div class="t-name">Kiểm thử luồng đăng nhập</div>
+              <div class="progress-meta" style="margin-top:8px"><span>Trạng thái</span><b>Chờ nhận việc</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Hoạt động gần đây</div>
+        <div class="card activity">
+          <div class="act-row">
+            <span class="act-dot"><svg><use href="#i-task"/></svg></span>
+            <div class="act-body"><b>Muse</b> đã hoàn thành việc <b>“Dựng phòng họp trực tuyến”</b> và chuyển sang cột Hoàn thành.</div>
+            <span class="act-time">12 phút trước</span>
+          </div>
+          <div class="act-row">
+            <span class="act-dot"><svg><use href="#i-board"/></svg></span>
+            <div class="act-body"><b>Hùng</b> cập nhật tiến độ việc <b>“Lên kế hoạch phân công đội dự án”</b> lên 40%.</div>
+            <span class="act-time">26 phút trước</span>
+          </div>
+          <div class="act-row">
+            <span class="act-dot"><svg><use href="#i-flag"/></svg></span>
+            <div class="act-body"><b>Muse</b> đã giao việc <b>“Lên kế hoạch phân công đội dự án”</b> cho <b>Hùng</b> trong phòng họp.</div>
+            <span class="act-time">1 giờ trước</span>
+          </div>
+          <div class="act-row">
+            <span class="act-dot"><svg><use href="#i-chat"/></svg></span>
+            <div class="act-body"><b>Chung</b> nhắn cả đội kiểm tra phòng họp 5 phút một lần để không bỏ sót việc được giao.</div>
+            <span class="act-time">1 giờ trước</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. PHÒNG HỌP ================= -->
+      <section class="view" id="view-meeting">
+        <div class="page-head">
+          <h1>Phòng họp</h1>
+          <p>Nơi cả đội trao đổi, báo cáo và nhận việc. Kiểm tra 5 phút một lần.</p>
+        </div>
+
+        <div class="card chat-card">
+          <div class="chat-head">
+            <span class="avatar av-40 c-indigo">E</span>
+            <div class="who">
+              <b>Phòng họp chung</b>
+              <span><span class="dot on"></span>3 đang hoạt động · 5 thành viên</span>
+            </div>
+            <button class="icon-btn" aria-label="Tìm trong phòng họp"><svg class="ic"><use href="#i-search"/></svg></button>
+            <button class="icon-btn" aria-label="Thông báo phòng họp"><svg class="ic"><use href="#i-bell"/></svg></button>
+          </div>
+
+          <div class="chat-body" id="chatBody">
+            <div class="day-sep">Hôm nay</div>
+
+            <div class="msg">
+              <span class="avatar av-36 c-teal">T</span>
+              <div class="m-body">
+                <div class="m-meta"><span class="m-name">Tuấn</span><span class="m-role">Developer</span><span class="m-time">09:02</span></div>
+                <p class="m-text">Tuấn, phụ trách lập trình, đã sẵn sàng.</p>
+              </div>
+            </div>
+
+            <div class="msg">
+              <span class="avatar av-36 c-slate">H</span>
+              <div class="m-body">
+                <div class="m-meta"><span class="m-name">Hùng</span><span class="m-role">Trưởng phòng</span><span class="m-time">09:03</span></div>
+                <p class="m-text">Hùng, phụ trách quản lý dự án, đã sẵn sàng.</p>
+              </div>
+            </div>
+
+            <div class="msg">
+              <span class="avatar av-36 c-dark">C</span>
+              <div class="m-body">
+                <div class="m-meta"><span class="m-name">Chung</span><span class="m-role">Giám đốc</span><span class="m-time">09:05</span></div>
+                <p class="m-text">Chào cả đội, từ nay kiểm tra phòng họp 5 phút một lần nhé. Có việc mới là nhận và báo lại ngay trong phòng này.</p>
+              </div>
+            </div>
+
+            <div class="msg">
+              <span class="avatar av-36 c-indigo">M</span>
+              <div class="m-body">
+                <div class="m-meta"><span class="m-name">Muse</span><span class="m-role">Phó giám đốc điều hành</span><span class="m-time">09:07</span></div>
+                <p class="m-text">Báo cáo tiến độ: phòng họp trực tuyến đã dựng xong, cả 5 thành viên đã có mặt trong danh sách. Em giao việc đầu tiên cho anh Hùng ở dưới đây ạ.</p>
+                <div class="assign">
+                  <span class="assign-tag"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-flag"/></svg>Giao việc</span>
+                  <h4>Lên kế hoạch phân công đội dự án</h4>
+                  <p>Lập danh sách phân công cho từng thành viên theo đúng vai trò, kèm thứ tự ưu tiên và mốc thời gian cho mỗi đầu việc.</p>
+                  <div class="assign-rows">
+                    <div>Người nhận: <b>Hùng — Trưởng phòng</b></div>
+                    <div>Hạn hoàn thành: <b>Hôm nay, 17:00</b></div>
+                    <div>Ưu tiên: <b>Cao</b></div>
+                  </div>
+                  <div class="assign-foot">
+                    <div class="progress"><i style="width:40%"></i></div>
+                    <span>Tiến độ hiện tại <b>40%</b></span>
+                    <button class="btn btn-primary" type="button">Xem việc</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form class="composer" id="composer">
+            <div class="composer-box">
+              <button class="attach-btn" type="button" aria-label="Đính kèm tệp"><svg class="ic"><use href="#i-clip"/></svg></button>
+              <textarea id="composerInput" rows="1" placeholder="Nhắn tin cho cả đội…" aria-label="Soạn tin nhắn"></textarea>
+            </div>
+            <button class="btn btn-primary send-btn" type="submit"><svg class="ic sm"><use href="#i-send"/></svg>Gửi</button>
+          </form>
+          <div class="composer-hint">Nhấn Enter để gửi · Shift + Enter để xuống dòng</div>
+        </div>
+      </section>
+
+      <!-- ================= 3. CÔNG VIỆC ================= -->
+      <section class="view" id="view-board">
+        <div class="page-head">
+          <h1>Công việc</h1>
+          <p>Toàn bộ đầu việc của đội, theo dõi theo trạng thái và tiến độ.</p>
+        </div>
+
+        <div class="board">
+          <div class="col">
+            <div class="col-head"><span class="col-dot" style="background:#9CA3AF"></span><span class="col-name">Chờ nhận</span><span class="col-count">2</span></div>
+            <div class="task">
+              <span class="tag gray">Giao diện</span>
+              <h4>Thiết kế lại giao diện phòng họp</h4>
+              <p class="t-desc">Làm lại bố cục phòng họp theo phong cách tối giản, dễ đọc trên cả điện thoại.</p>
+              <div class="progress"><i style="width:0%"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>0%</b></div>
+              <div class="task-meta">
+                <div class="who"><span class="avatar av-32 c-teal">T</span><span>Tuấn</span></div>
+                <span class="task-due"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-clock"/></svg>23/10</span>
+              </div>
+            </div>
+            <div class="task">
+              <span class="tag gray">Kiểm thử</span>
+              <h4>Kiểm thử luồng đăng nhập</h4>
+              <p class="t-desc">Kiểm tra đăng nhập, đăng xuất và các trường hợp nhập sai trên điện thoại và máy tính.</p>
+              <div class="progress"><i style="width:0%"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>0%</b></div>
+              <div class="task-meta">
+                <div class="who"><span class="avatar av-32 c-plum">L</span><span>Linh</span></div>
+                <span class="task-due"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-clock"/></svg>24/10</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="col-head"><span class="col-dot" style="background:#4F46E5"></span><span class="col-name">Đang làm</span><span class="col-count">1</span></div>
+            <div class="task">
+              <span class="tag indigo">Kế hoạch</span>
+              <h4>Lên kế hoạch phân công đội dự án</h4>
+              <p class="t-desc">Phân công từng thành viên theo vai trò, kèm thứ tự ưu tiên và mốc thời gian.</p>
+              <div class="progress"><i style="width:40%"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>40%</b></div>
+              <div class="task-meta">
+                <div class="who"><span class="avatar av-32 c-slate">H</span><span>Hùng</span></div>
+                <span class="task-due"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-clock"/></svg>Hôm nay</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="col-head"><span class="col-dot" style="background:#F59E0B"></span><span class="col-name">Chờ duyệt</span><span class="col-count">1</span></div>
+            <div class="task">
+              <span class="tag amber">Chờ Giám đốc duyệt</span>
+              <h4>Chốt danh sách nhân sự dự án</h4>
+              <p class="t-desc">Danh sách 5 thành viên và vai trò của từng người đã soạn xong, đang chờ phê duyệt.</p>
+              <div class="progress"><i style="width:100%;background:#F59E0B"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>100%</b></div>
+              <div class="task-meta">
+                <div class="who"><span class="avatar av-32 c-indigo">M</span><span>Muse</span></div>
+                <span class="task-due"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-clock"/></svg>Hôm nay</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="col-head"><span class="col-dot" style="background:#16A34A"></span><span class="col-name">Hoàn thành</span><span class="col-count">1</span></div>
+            <div class="task">
+              <span class="tag green">Đã xong</span>
+              <h4><span class="done-check"><svg class="ic sm"><use href="#i-check"/></svg></span>Dựng phòng họp trực tuyến</h4>
+              <p class="t-desc">Phòng họp đã sẵn sàng cho cả đội vào trao đổi và nhận việc.</p>
+              <div class="progress"><i style="width:100%;background:#16A34A"></i></div>
+              <div class="progress-meta"><span>Tiến độ</span><b>100%</b></div>
+              <div class="task-meta">
+                <div class="who"><span class="avatar av-32 c-indigo">M</span><span>Muse</span></div>
+                <span class="task-due"><svg class="ic sm" style="width:13px;height:13px"><use href="#i-check"/></svg>Đã duyệt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. SƠ ĐỒ ================= -->
+      <section class="view" id="view-org">
+        <div class="page-head">
+          <h1>Sơ đồ tổ chức</h1>
+          <p>Cấu trúc đội ngũ của Enteesee, từ Giám đốc tới từng thành viên.</p>
+        </div>
+        <div class="card org">
+          <div class="org-tree">
+            <div class="org-node lead">
+              <span class="avatar av-40 c-dark">C<span class="dot on"></span></span>
+              <div class="who"><b>Chung</b><span>Giám đốc</span></div>
+            </div>
+            <div class="org-v"></div>
+            <div class="org-node">
+              <span class="avatar av-40 c-indigo">M<span class="dot on"></span></span>
+              <div class="who"><b>Muse</b><span>Phó giám đốc điều hành</span></div>
+            </div>
+            <div class="org-v"></div>
+            <div class="org-h-wrap">
+              <div class="org-node">
+                <span class="avatar av-40 c-slate">H<span class="dot recent"></span></span>
+                <div class="who"><b>Hùng</b><span>Trưởng phòng</span></div>
+              </div>
+              <div class="org-children">
+                <div class="org-child">
+                  <div class="org-node">
+                    <span class="avatar av-40 c-teal">T<span class="dot recent"></span></span>
+                    <div class="who"><b>Tuấn</b><span>Developer</span></div>
+                  </div>
+                </div>
+                <div class="org-child">
+                  <div class="org-node">
+                    <span class="avatar av-40 c-plum">L<span class="dot off"></span></span>
+                    <div class="who"><b>Linh</b><span>Tester</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="org-note">Giám đốc điều hành chung · Phó giám đốc điều phối công việc · Trưởng phòng quản lý đội thực thi gồm Developer và Tester.</p>
+        </div>
+      </section>
+
+      <!-- ================= 5. NHÂN VIÊN ================= -->
+      <section class="view" id="view-staff">
+        <div class="page-head">
+          <h1>Nhân viên</h1>
+          <p>5 thành viên · 3 đang hoạt động trong phòng họp.</p>
+        </div>
+        <div class="card staff">
+          <div class="staff-row">
+            <span class="avatar av-40 c-dark">C<span class="dot on"></span></span>
+            <div class="who"><b>Chung</b><span>Giám đốc · Điều hành và phê duyệt</span></div>
+            <span class="last">Đang hoạt động</span>
+            <span class="status-pill on"><span class="dot on"></span>Đang hoạt động</span>
+          </div>
+          <div class="staff-row">
+            <span class="avatar av-40 c-indigo">M<span class="dot on"></span></span>
+            <div class="who"><b>Muse</b><span>Phó giám đốc điều hành · Điều phối công việc</span></div>
+            <span class="last">Đang hoạt động</span>
+            <span class="status-pill on"><span class="dot on"></span>Đang hoạt động</span>
+          </div>
+          <div class="staff-row">
+            <span class="avatar av-40 c-slate">H<span class="dot recent"></span></span>
+            <div class="who"><b>Hùng</b><span>Trưởng phòng · Quản lý dự án</span></div>
+            <span class="last">Hoạt động 4 phút trước</span>
+            <span class="status-pill recent"><span class="dot recent"></span>Vừa hoạt động</span>
+          </div>
+          <div class="staff-row">
+            <span class="avatar av-40 c-teal">T<span class="dot recent"></span></span>
+            <div class="who"><b>Tuấn</b><span>Developer · Lập trình</span></div>
+            <span class="last">Hoạt động 9 phút trước</span>
+            <span class="status-pill recent"><span class="dot recent"></span>Vừa hoạt động</span>
+          </div>
+          <div class="staff-row">
+            <span class="avatar av-40 c-plum">L<span class="dot off"></span></span>
+            <div class="who"><b>Linh</b><span>Tester · Kiểm thử</span></div>
+            <span class="last">Chưa từng vào phòng họp</span>
+            <span class="status-pill off"><span class="dot off"></span>Chưa vào phòng họp</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. CÀI ĐẶT ================= -->
+      <section class="view" id="view-settings">
+        <div class="page-head">
+          <h1>Cài đặt</h1>
+          <p>Thiết lập cho phòng họp và cách đội nhận thông báo công việc.</p>
+        </div>
+
+        <div class="section-label">Phòng họp</div>
+        <div class="card settings">
+          <div class="set-row">
+            <div class="txt"><b>Tần suất kiểm tra phòng họp</b><span>Mỗi thành viên tự kiểm tra tin nhắn và việc mới theo chu kỳ này.</span></div>
+            <select class="select" aria-label="Tần suất kiểm tra phòng họp">
+              <option selected>5 phút một lần</option>
+              <option>10 phút một lần</option>
+              <option>15 phút một lần</option>
+              <option>30 phút một lần</option>
+            </select>
+          </div>
+          <div class="set-row">
+            <div class="txt"><b>Thông báo khi có việc mới</b><span>Báo ngay cho người được giao việc khi có thẻ việc mới trong phòng họp.</span></div>
+            <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="txt"><b>Nhắc việc sắp tới hạn</b><span>Nhắc người phụ trách trước hạn hoàn thành 1 giờ.</span></div>
+            <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+          </div>
+        </div>
+
+        <div class="section-label">Công việc</div>
+        <div class="card settings">
+          <div class="set-row">
+            <div class="txt"><b>Việc hoàn thành phải chờ duyệt</b><span>Việc chỉ chuyển sang Hoàn thành sau khi Giám đốc phê duyệt.</span></div>
+            <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="txt"><b>Báo cáo tiến độ cuối ngày</b><span>Tổng hợp tiến độ của cả đội và gửi vào phòng họp lúc 17:30.</span></div>
+            <label class="switch"><input type="checkbox"><span class="track"></span></label>
+          </div>
+          <div class="set-row">
+            <div class="txt"><b>Ngôn ngữ giao diện</b><span>Áp dụng cho toàn bộ phòng họp và bảng công việc.</span></div>
+            <select class="select" aria-label="Ngôn ngữ giao diện">
+              <option selected>Tiếng Việt</option>
+              <option>Tiếng Anh</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ================= BOTTOM NAV (mobile) ================= -->
+<nav class="bottom-nav" aria-label="Điều hướng dưới">
+  <div class="row">
+    <button class="active" data-view="overview"><svg class="ic"><use href="#i-home"/></svg>Tổng quan</button>
+    <button data-view="org"><svg class="ic"><use href="#i-org"/></svg>Sơ đồ</button>
+    <button data-view="meeting"><svg class="ic"><use href="#i-chat"/></svg>Phòng họp<span class="bdot"></span></button>
+    <button data-view="board"><svg class="ic"><use href="#i-board"/></svg>Công việc</button>
+    <button data-view="staff"><svg class="ic"><use href="#i-users"/></svg>Nhân viên</button>
+    <button data-view="settings"><svg class="ic"><use href="#i-gear"/></svg>Cài đặt</button>
+  </div>
+</nav>
+
+<script>
+(function(){
+  var titles = {
+    overview: "Tổng quan",
+    org: "Sơ đồ",
+    meeting: "Phòng họp",
+    board: "Công việc",
+    staff: "Nhân viên",
+    settings: "Cài đặt"
+  };
+  var buttons = document.querySelectorAll("[data-view]");
+  var crumb = document.getElementById("crumb");
+
+  function show(name){
+    document.querySelectorAll(".view").forEach(function(v){
+      v.classList.toggle("active", v.id === "view-" + name);
+    });
+    buttons.forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-view") === name);
+    });
+    if (crumb && titles[name]) crumb.textContent = titles[name];
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){ show(b.getAttribute("data-view")); });
+  });
+
+  /* Soạn tin trong phòng họp: gửi là thêm tin nhắn mới của Giám đốc vào cuối cuộc trò chuyện */
+  var form = document.getElementById("composer");
+  var input = document.getElementById("composerInput");
+  var body = document.getElementById("chatBody");
+  if (form && input && body){
+    input.addEventListener("keydown", function(e){
+      if (e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+    input.addEventListener("input", function(){
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 96) + "px";
+    });
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var text = input.value.trim();
+      if (!text) return;
+      var now = new Date();
+      var hh = String(now.getHours()).padStart(2, "0");
+      var mm = String(now.getMinutes()).padStart(2, "0");
+      var wrap = document.createElement("div");
+      wrap.className = "msg";
+      var av = document.createElement("span");
+      av.className = "avatar av-36 c-dark";
+      av.textContent = "C";
+      var mBody = document.createElement("div");
+      mBody.className = "m-body";
+      var meta = document.createElement("div");
+      meta.className = "m-meta";
+      var nm = document.createElement("span");
+      nm.className = "m-name"; nm.textContent = "Chung";
+      var rl = document.createElement("span");
+      rl.className = "m-role"; rl.textContent = "Giám đốc";
+      var tm = document.createElement("span");
+      tm.className = "m-time"; tm.textContent = hh + ":" + mm;
+      meta.appendChild(nm); meta.appendChild(rl); meta.appendChild(tm);
+      var p = document.createElement("p");
+      p.className = "m-text"; p.textContent = text;
+      mBody.appendChild(meta); mBody.appendChild(p);
+      wrap.appendChild(av); wrap.appendChild(mBody);
+      body.appendChild(wrap);
+      input.value = "";
+      input.style.height = "auto";
+      wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  }
+})();
+</script>
+</body>
+</html>
