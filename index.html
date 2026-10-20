@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Công ty Enteesee — Chọn mẫu giao diện</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:#F5F5F4; color:#1C1C1E; min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:1040px; margin:0 auto; padding:56px 24px 64px; }
+  .eyebrow { font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8A8A93; margin-bottom:12px; }
+  h1 { font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1.2; margin-bottom:12px; }
+  .lede { font-size:15px; line-height:1.6; color:#5C5C63; max-width:640px; margin-bottom:40px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .card {
+    background:#fff; border:1px solid #E5E4E0; border-radius:16px; padding:28px 24px;
+    display:flex; flex-direction:column; gap:0;
+    box-shadow:0 1px 2px rgba(16,24,40,.04);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(16,24,40,.09); border-color:#D8D7D2; }
+  .swatch { height:88px; border-radius:10px; margin-bottom:22px; position:relative; overflow:hidden; }
+  .sw-a { background:#FAFAFA; border:1px solid #E7E7EA; }
+  .sw-a::after { content:""; position:absolute; left:14px; top:14px; width:56px; height:10px; border-radius:5px; background:#4F46E5; box-shadow:0 22px 0 #E7E7EA, 0 40px 0 #ECECF0; }
+  .sw-b { background:#0A0B0E; border:1px solid #1F232E; }
+  .sw-b::after { content:""; position:absolute; left:14px; top:14px; width:56px; height:10px; border-radius:5px; background:#5B8CFF; box-shadow:0 22px 0 #1F232E, 0 40px 0 #232833; }
+  .sw-c { background:#F4F2ED; border:1px solid #E7E2D8; }
+  .sw-c::after { content:""; position:absolute; left:14px; top:14px; width:56px; height:12px; border-radius:6px; background:#12B76A; box-shadow:0 24px 0 #FFFFFF, 0 44px 0 #FFFFFF; }
+  .tag { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8A8A93; margin-bottom:8px; }
+  .card h2 { font-size:19px; font-weight:700; letter-spacing:-.01em; margin-bottom:8px; }
+  .card p { font-size:14px; line-height:1.6; color:#5C5C63; flex:1; margin-bottom:24px; }
+  .btn {
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    min-height:44px; padding:0 20px; border-radius:10px;
+    background:#1C1C1E; color:#fff; font-size:14px; font-weight:600; text-decoration:none;
+    transition:background .15s ease;
+  }
+  .btn:hover { background:#000; }
+  .btn svg { width:15px; height:15px; }
+  .note {
+    margin-top:36px; padding:16px 20px; background:#fff; border:1px solid #E5E4E0; border-radius:12px;
+    font-size:14px; line-height:1.6; color:#5C5C63; display:flex; gap:12px; align-items:flex-start;
+  }
+  .note svg { width:18px; height:18px; flex:none; margin-top:2px; color:#8A8A93; }
+  @media (max-width:760px) {
+    .wrap { padding:36px 16px 48px; }
+    h1 { font-size:24px; }
+    .grid { grid-template-columns:1fr; gap:16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Công ty Enteesee · Phòng Họp &amp; Điều Hành</div>
+    <h1>Chọn mẫu giao diện</h1>
+    <p class="lede">Ba phương án thiết kế với ba phong cách khác hẳn nhau, cùng một bộ nội dung thật của công ty. Anh mở từng mẫu, xem kỹ rồi chọn một để áp vào bản chính thức.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="swatch sw-a"></div>
+        <div class="tag">Mẫu A</div>
+        <h2>Sáng tối giản cao cấp</h2>
+        <p>Nền sáng phẳng, viền mảnh, nhấn indigo — sạch và đắt tiền theo kiểu Linear / Notion bản pro.</p>
+        <a class="btn" href="mau-a.html">Mở mẫu A
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="swatch sw-b"></div>
+        <div class="tag">Mẫu B</div>
+        <h2>Tối điều hành</h2>
+        <p>Nền đen sâu, panel tối, nhấn xanh điện phát sáng nhẹ — cảm giác phòng điều hành cao cấp về đêm.</p>
+        <a class="btn" href="mau-b.html">Mở mẫu B
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="swatch sw-c"></div>
+        <div class="tag">Mẫu C</div>
+        <h2>App thân thiện</h2>
+        <p>Thẻ bo tròn mềm, avatar pastel, nhấn xanh lá — ấm và gần gũi như một app đội nhóm trên điện thoại.</p>
+        <a class="btn" href="mau-c.html">Mở mẫu C
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18.5h2"/></svg>
+      <div><strong style="color:#1C1C1E">Gợi ý khi xem:</strong> mở trên điện thoại và máy tính để xem cả hai — mỗi mẫu đều có đủ thanh điều hướng bên (máy tính) và thanh dưới cố định (điện thoại), cùng 6 mục: Tổng quan, Sơ đồ, Phòng họp, Công việc, Nhân viên, Cài đặt.</div>
+    </div>
+  </div>
+</body>
+</html>
