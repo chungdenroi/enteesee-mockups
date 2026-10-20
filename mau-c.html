@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enteesee — Phòng Họp &amp; Điều Hành</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F4F2ED; --card:#FFFFFF; --ink:#1A1D21; --sub:#6B7280; --muted:#9CA3AF;
+  --line:#ECE9E2; --green:#12B76A; --green-dark:#067647; --green-tint:#ECFDF3;
+  --amber-tint:#FFFAEB; --amber:#B54708; --gray-tint:#F2F4F7; --blue-tint:#EFF8FF; --blue:#175CD3;
+  --radius:20px; --shadow:0 8px 30px rgba(26,29,33,.06),0 2px 8px rgba(26,29,33,.04);
+  --shadow-sm:0 2px 10px rgba(26,29,33,.05);
+}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:264px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:24px 16px;position:fixed;inset:0 auto 0 0;height:100vh;z-index:20}
+.main{flex:1;margin-left:264px;min-width:0;padding:0 32px 48px}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* SIDEBAR */
+.brand{display:flex;align-items:center;gap:12px;padding:0 8px 24px}
+.brand-mark{width:40px;height:40px;border-radius:12px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;letter-spacing:-.02em;box-shadow:0 6px 16px rgba(18,183,106,.35)}
+.brand h1{font-size:18px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.brand p{font-size:12px;color:var(--sub);font-weight:600;letter-spacing:.02em;text-transform:uppercase;margin-top:2px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 12px 8px}
+.nav-item{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 12px;border:0;background:transparent;border-radius:12px;font-size:15px;font-weight:600;color:#344054;text-align:left;width:100%;transition:background .15s,color .15s}
+.nav-item svg{width:22px;height:22px;flex-shrink:0;stroke:#667085}
+.nav-item:hover{background:#F9F8F5}
+.nav-item.active{background:var(--green-tint);color:var(--green-dark)}
+.nav-item.active svg{stroke:var(--green-dark)}
+.nav-badge{margin-left:auto;background:var(--green);color:#fff;font-size:12px;font-weight:700;min-width:22px;height:22px;padding:0 6px;border-radius:999px;display:grid;place-items:center}
+.nav-item.active .nav-badge{background:var(--green)}
+.sidebar-foot{margin-top:auto;background:#F9F8F5;border:1px solid var(--line);border-radius:16px;padding:16px}
+.sidebar-foot strong{font-size:14px;display:block}
+.sidebar-foot p{font-size:13px;color:var(--sub);margin:4px 0 12px;line-height:1.45}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid transparent;font-weight:700;font-size:14px;transition:all .15s}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(18,183,106,.28)}
+.btn-primary:hover{background:#0EA55E}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:#D6D3CB;background:#FDFCFA}
+.btn-sm{min-height:36px;padding:0 12px;font-size:13px;border-radius:10px}
+
+/* TOPBAR */
+.topbar{height:72px;display:flex;align-items:center;gap:16px;position:sticky;top:0;background:rgba(244,242,237,.88);backdrop-filter:blur(12px);z-index:10;margin:0 -8px;padding:0 8px}
+.topbar-title h2{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.topbar-title p{font-size:13px;color:var(--sub)}
+.search{margin-left:auto;flex:0 1 320px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px;box-shadow:var(--shadow-sm)}
+.search svg{width:20px;height:20px;stroke:var(--muted);flex-shrink:0}
+.search input{border:0;outline:0;background:transparent;width:100%;font-size:14px;color:var(--ink)}
+.search input::placeholder{color:var(--muted)}
+.icon-btn{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;position:relative;flex-shrink:0;box-shadow:var(--shadow-sm)}
+.icon-btn:hover{border-color:#D6D3CB}
+.icon-btn svg{width:22px;height:22px;stroke:#344054}
+.icon-btn .dot{position:absolute;top:10px;right:10px;width:8px;height:8px;background:#F04438;border:2px solid #fff;border-radius:50%}
+.top-avatar{width:44px;height:44px;border-radius:50%;background:#FFEAD5;color:#7A2E0E;display:grid;place-items:center;font-weight:800;font-size:15px;border:2px solid #fff;box-shadow:var(--shadow-sm);flex-shrink:0}
+
+/* VIEWS */
+.view{display:none;animation:fade .22s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:8px 0 24px;flex-wrap:wrap}
+.page-head h3{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
+.page-head p{color:var(--sub);font-size:15px;margin-top:6px;max-width:560px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(236,233,226,.7)}
+.section-title{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.section-sub{font-size:13px;color:var(--sub);margin-top:2px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat{padding:20px;border-radius:var(--radius)}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.stat-icon svg{width:22px;height:22px}
+.stat-icon.g{background:var(--green-tint)} .stat-icon.g svg{stroke:var(--green-dark)}
+.stat-icon.b{background:var(--blue-tint)} .stat-icon.b svg{stroke:var(--blue)}
+.stat-icon.a{background:var(--amber-tint)} .stat-icon.a svg{stroke:var(--amber)}
+.stat-icon.p{background:#F4F3FF} .stat-icon.p svg{stroke:#6941C6}
+.stat-num{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat-label{font-size:14px;font-weight:700;margin-top:6px}
+.stat-desc{font-size:13px;color:var(--sub);margin-top:2px}
+.trend{font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;background:var(--green-tint);color:var(--green-dark)}
+
+/* PRESENCE */
+.presence{padding:20px;margin-bottom:24px}
+.presence-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.presence-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.presence-row::-webkit-scrollbar{display:none}
+.person-chip{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:96px;padding:16px 8px 12px;border-radius:16px;background:#F9F8F5;border:1px solid transparent;text-align:center}
+.person-chip:hover{border-color:var(--line);background:#fff}
+.avatar-wrap{position:relative;width:52px;height:52px}
+.avatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px}
+.status-dot{position:absolute;right:1px;bottom:1px;width:14px;height:14px;border-radius:50%;border:3px solid #F9F8F5;background:#D1D5DB}
+.status-dot.on{background:var(--green)} .status-dot.recent{background:#F79009}
+.person-chip strong{font-size:13px;line-height:1.2}
+.person-chip span{font-size:11px;color:var(--sub);line-height:1.3;font-weight:600}
+.av-chung{background:#FFEAD5;color:#7A2E0E}.av-muse{background:#D1FADF;color:#027A48}.av-hung{background:#D1E9FF;color:#175CD3}.av-tuan{background:#FEE4E2;color:#912018}.av-linh{background:#E9D7FE;color:#6941C6}
+
+/* GRID OVERVIEW */
+.grid-2{display:grid;grid-template-columns:1.55fr .95fr;gap:24px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:16px}
+.emp-card{padding:20px;display:flex;gap:16px;align-items:flex-start}
+.emp-card:hover{box-shadow:0 12px 34px rgba(26,29,33,.08)}
+.emp-avatar{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0}
+.emp-body{flex:1;min-width:0}
+.emp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.emp-name{font-size:16px;font-weight:800}
+.emp-role{font-size:13px;color:var(--sub);font-weight:600}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.on{background:var(--green-tint);color:var(--green-dark)}
+.chip.recent{background:var(--amber-tint);color:var(--amber)}
+.chip.off{background:var(--gray-tint);color:#667085}
+.chip.off::before{background:#98A2B3}
+.task-mini{margin-top:12px;background:#F9F8F5;border-radius:12px;padding:12px}
+.task-mini p{font-size:13px;font-weight:700;line-height:1.4}
+.progress{height:8px;background:#EAECF0;border-radius:999px;overflow:hidden;margin-top:8px}
+.progress i{display:block;height:100%;background:var(--green);border-radius:999px}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:600;margin-top:6px}
+.emp-note{font-size:13px;color:var(--sub);margin-top:10px}
+
+/* ACTIVITY */
+.activity{padding:20px}
+.activity-list{margin-top:16px;display:flex;flex-direction:column}
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.activity-item:last-child{border-bottom:0;padding-bottom:0}
+.activity-item:first-child{padding-top:0}
+.act-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:13px;font-weight:800}
+.activity-item p{font-size:14px;line-height:1.45}
+.activity-item p b{font-weight:800}
+.activity-item time{font-size:12px;color:var(--muted);font-weight:600}
+
+/* CHAT */
+.chat-card{overflow:hidden;display:flex;flex-direction:column;height:calc(100vh - 176px);min-height:560px}
+.chat-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:#fff}
+.chat-head .avatar{width:44px;height:44px;font-size:15px}
+.chat-messages{flex:1;overflow-y:auto;padding:24px;background:#FDFCFA;display:flex;flex-direction:column;gap:20px}
+.msg{display:flex;gap:12px;max-width:760px}
+.msg .avatar{width:40px;height:40px;font-size:14px;flex-shrink:0}
+.msg-bubble{background:#fff;border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:12px 16px;box-shadow:var(--shadow-sm)}
+.msg-meta{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.msg-meta strong{font-size:14px}
+.msg-meta span{font-size:12px;color:var(--muted);font-weight:600}
+.msg-bubble p{font-size:15px;line-height:1.55;color:#1F2937}
+.msg-assign{max-width:760px;margin-left:52px;background:var(--green-tint);border:1.5px solid #A6F4C5;border-radius:16px;padding:16px}
+.msg-assign-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tag-assign{background:var(--green);color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+.msg-assign h4{font-size:16px;font-weight:800}
+.msg-assign p{font-size:14px;color:#344054;line-height:1.5}
+.msg-assign-foot{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pill{font-size:12px;font-weight:700;background:#fff;border:1px solid #A6F4C5;color:var(--green-dark);padding:6px 10px;border-radius:999px}
+.chat-composer{padding:16px;border-top:1px solid var(--line);background:#fff;display:flex;gap:8px;align-items:flex-end}
+.composer-box{flex:1;display:flex;align-items:center;gap:8px;background:#F9F8F5;border:1px solid var(--line);border-radius:14px;padding:4px 4px 4px 12px;min-height:48px}
+.composer-box input{flex:1;border:0;background:transparent;outline:0;font-size:15px;min-width:0}
+.attach-btn{width:40px;height:40px;border:0;background:transparent;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.attach-btn:hover{background:#fff}
+.attach-btn svg{width:20px;height:20px;stroke:#667085}
+.send-btn{min-height:48px;padding:0 20px}
+
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+.col{background:#EDEBE6;border-radius:20px;padding:12px;min-height:200px}
+.col-head{display:flex;align-items:center;gap:8px;padding:4px 4px 12px}
+.col-dot{width:9px;height:9px;border-radius:50%}
+.col-head h4{font-size:14px;font-weight:800}
+.col-count{margin-left:auto;background:#fff;font-size:12px;font-weight:800;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.task-card{background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid rgba(255,255,255,.8);margin-bottom:12px}
+.task-card:last-child{margin-bottom:0}
+.task-card h5{font-size:14px;font-weight:800;line-height:1.4}
+.task-card p{font-size:13px;color:var(--sub);margin-top:6px;line-height:1.45}
+.task-foot{display:flex;align-items:center;gap:8px;margin-top:14px}
+.mini-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0}
+.task-foot span{font-size:12px;font-weight:700;color:#344054}
+.task-foot time{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600}
+.task-progress{margin-top:12px}
+.add-btn{width:100%;min-height:44px;border:1.5px dashed #D6D3CB;background:transparent;border-radius:12px;font-weight:700;font-size:13px;color:var(--sub)}
+.add-btn:hover{background:#fff;color:var(--ink)}
+
+/* ORG / PEOPLE / SETTINGS */
+.org{padding:32px 20px;text-align:center;overflow-x:auto}
+.org-root{display:inline-flex;flex-direction:column;align-items:center}
+.org-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;min-width:200px;box-shadow:var(--shadow-sm)}
+.org-box.primary{border-color:#A6F4C5;background:var(--green-tint)}
+.org-box strong{display:block;font-size:15px}
+.org-box span{font-size:13px;color:var(--sub);font-weight:600}
+.org-line{width:2px;height:28px;background:#D6D3CB}
+.org-branch{display:flex;gap:16px;position:relative;padding-top:0}
+.org-child{display:flex;flex-direction:column;align-items:center}
+.people-list{overflow:hidden}
+.person-row{display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line);min-height:76px}
+.person-row:last-child{border-bottom:0}
+.person-row:hover{background:#FDFCFA}
+.person-row .avatar{width:48px;height:48px;font-size:15px}
+.person-info{flex:1;min-width:0}
+.person-info strong{font-size:15px;display:block}
+.person-info span{font-size:13px;color:var(--sub)}
+.settings{overflow:hidden}
+.setting-row{display:flex;align-items:center;gap:16px;padding:20px;border-bottom:1px solid var(--line);min-height:72px}
+.setting-row:last-child{border-bottom:0}
+.setting-row strong{font-size:15px;display:block}
+.setting-row p{font-size:13px;color:var(--sub)}
+.switch{margin-left:auto;width:48px;height:28px;border-radius:999px;background:#EAECF0;border:0;position:relative;flex-shrink:0;transition:background .15s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:left .15s}
+.switch.on{background:var(--green)} .switch.on::after{left:23px}
+
+/* BOTTOM NAV */
+.bottom-nav{display:none}
+.mobile-brand{display:none}
+
+@media(max-width:1024px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .kanban{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:0 16px 96px}
+  .topbar{height:64px}
+  .search{display:none}
+  .topbar-title p{display:none}
+  .mobile-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px}
+  .mobile-brand i{width:32px;height:32px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center;font-style:normal;font-size:16px}
+  .topbar-title{display:none}
+  .page-head h3{font-size:24px}
+  .stats{grid-template-columns:repeat(2,1fr);gap:12px}
+  .stat{padding:16px}.stat-num{font-size:26px}
+  .kanban{display:flex;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;margin:0 -16px;padding-left:16px;padding-right:16px}
+  .col{min-width:272px;scroll-snap-align:start}
+  .chat-card{height:calc(100dvh - 176px);min-height:480px;margin:0 -4px}
+  .msg-assign{margin-left:0}
+  .org-branch{flex-direction:column;gap:0}
+  .org-child .org-line{height:20px}
+  .bottom-nav{display:flex;position:fixed;left:12px;right:12px;bottom:12px;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 32px rgba(26,29,33,.14);padding:6px;z-index:30;gap:2px}
+  .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border:0;background:transparent;border-radius:14px;font-size:10px;font-weight:700;color:#667085;padding:4px 2px}
+  .bnav-item svg{width:22px;height:22px;stroke:#667085}
+  .bnav-item.active{background:var(--green-tint);color:var(--green-dark)}
+  .bnav-item.active svg{stroke:var(--green-dark)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div><h1>Enteesee</h1><p>Công ty</p></div>
+    </div>
+    <div class="nav-label">Điều hành</div>
+    <nav class="nav" id="sideNav">
+      <button class="nav-item active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>Tổng quan</button>
+      <button class="nav-item" data-tab="org"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="16" width="6" height="6" rx="1.5"/><rect x="16" y="16" width="6" height="6" rx="1.5"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>Sơ đồ</button>
+      <button class="nav-item" data-tab="meeting"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.6A8.5 8.5 0 1 1 21 11.5Z"/></svg>Phòng họp<span class="nav-badge">2</span></button>
+      <button class="nav-item" data-tab="work"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="10" rx="1.5"/></svg>Công việc</button>
+      <button class="nav-item" data-tab="people"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 6.6M17.5 14.2a6.5 6.5 0 0 1 4 5.8"/></svg>Nhân viên</button>
+      <button class="nav-item" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.86 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>Cài đặt</button>
+    </nav>
+    <div class="sidebar-foot">
+      <strong>Phòng họp đang mở</strong>
+      <p>3 thành viên đang hoạt động. Kiểm tra mỗi 5 phút để không bỏ lỡ việc mới.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="switchTab('meeting')">Vào phòng họp</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main"><div class="wrap">
+    <header class="topbar">
+      <div class="mobile-brand"><i>E</i>Enteesee</div>
+      <div class="topbar-title"><h2 id="topTitle">Tổng quan</h2><p id="topSub">Thứ Tư, 21 tháng 10 · Phòng Họp &amp; Điều Hành</p></div>
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" placeholder="Tìm nhân viên, công việc..." aria-label="Tìm kiếm"></label>
+      <button class="icon-btn" aria-label="Thông báo"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 20a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+      <div class="top-avatar" title="Chung — Giám đốc">C</div>
+    </header>
+
+    <!-- 1. TỔNG QUAN -->
+    <section class="view active" id="view-overview">
+      <div class="page-head"><div><h3>Chào buổi sáng, Chung</h3><p>Đội đang vận hành ổn định. Có 1 việc chờ bạn duyệt và 3 việc đang được triển khai.</p></div><button class="btn btn-primary" onclick="switchTab('meeting')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.6A8.5 8.5 0 1 1 21 11.5Z"/></svg>Mở phòng họp</button></div>
+
+      <div class="stats">
+        <div class="card stat"><div class="stat-top"><div class="stat-icon g"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 6.6M17.5 14.2a6.5 6.5 0 0 1 4 5.8"/></svg></div><span class="trend">Đầy đủ</span></div><div class="stat-num">5</div><div class="stat-label">Nhân viên</div><div class="stat-desc">Toàn bộ đội ngũ Enteesee</div></div>
+        <div class="card stat"><div class="stat-top"><div class="stat-icon b"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><span class="trend">Trực tiếp</span></div><div class="stat-num">3</div><div class="stat-label">Đang hoạt động</div><div class="stat-desc">Chung, Muse và Hùng</div></div>
+        <div class="card stat"><div class="stat-top"><div class="stat-icon p"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="10" rx="1.5"/></svg></div></div><div class="stat-num">3</div><div class="stat-label">Việc đang làm</div><div class="stat-desc">Trên tổng số 4 đầu việc</div></div>
+        <div class="card stat"><div class="stat-top"><div class="stat-icon a"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5l3 2"/><circle cx="12" cy="12" r="9"/></svg></div><span class="trend" style="background:var(--amber-tint);color:var(--amber)">Cần xử lý</span></div><div class="stat-num">1</div><div class="stat-label">Chờ duyệt</div><div class="stat-desc">Cần Giám đốc phê duyệt</div></div>
+      </div>
+
+      <div class="card presence">
+        <div class="presence-head"><div><div class="section-title">Ai đang ở đây?</div><div class="section-sub">Hiện diện trong phòng họp lúc này</div></div><button class="btn btn-ghost btn-sm" onclick="switchTab('people')">Xem tất cả</button></div>
+        <div class="presence-row">
+          <div class="person-chip"><div class="avatar-wrap"><div class="avatar av-chung">C</div><span class="status-dot on"></span></div><strong>Chung</strong><span>Đang hoạt động</span></div>
+          <div class="person-chip"><div class="avatar-wrap"><div class="avatar av-muse">M</div><span class="status-dot on"></span></div><strong>Muse</strong><span>Đang hoạt động</span></div>
+          <div class="person-chip"><div class="avatar-wrap"><div class="avatar av-hung">H</div><span class="status-dot recent"></span></div><strong>Hùng</strong><span>Hoạt động 4 phút trước</span></div>
+          <div class="person-chip"><div class="avatar-wrap"><div class="avatar av-tuan">T</div><span class="status-dot recent"></span></div><strong>Tuấn</strong><span>Hoạt động 9 phút trước</span></div>
+          <div class="person-chip"><div class="avatar-wrap"><div class="avatar av-linh">L</div><span class="status-dot"></span></div><strong>Linh</strong><span>Chưa từng vào phòng họp</span></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="stack">
+          <div><div class="section-title" style="font-size:18px">Đội ngũ</div><div class="section-sub">Trạng thái và việc đang phụ trách</div></div>
+
+          <article class="card emp-card"><div class="emp-avatar av-chung">C</div><div class="emp-body"><div class="emp-top"><div><div class="emp-name">Chung</div><div class="emp-role">Giám đốc</div></div><span class="chip on">Đang hoạt động</span></div><p class="emp-note">Người điều hành chung, phê duyệt các đầu việc quan trọng của công ty.</p></div></article>
+
+          <article class="card emp-card"><div class="emp-avatar av-muse">M</div><div class="emp-body"><div class="emp-top"><div><div class="emp-name">Muse</div><div class="emp-role">Phó giám đốc điều hành</div></div><span class="chip on">Đang hoạt động</span></div><p class="emp-note">Điều phối công việc hằng ngày, tổng hợp báo cáo tiến độ cho Giám đốc.</p><div class="task-mini"><p>Đã hoàn thành: Dựng phòng họp trực tuyến</p><div class="progress"><i style="width:100%"></i></div><div class="progress-meta"><span>Tiến độ</span><span>100%</span></div></div></div></article>
+
+          <article class="card emp-card"><div class="emp-avatar av-hung">H</div><div class="emp-body"><div class="emp-top"><div><div class="emp-name">Hùng</div><div class="emp-role">Trưởng phòng · Quản lý dự án</div></div><span class="chip recent">Vừa hoạt động</span></div><div class="task-mini"><p>Đang làm: Lên kế hoạch phân công đội dự án</p><div class="progress"><i style="width:40%"></i></div><div class="progress-meta"><span>Tiến độ</span><span>40%</span></div></div></div></article>
+
+          <article class="card emp-card"><div class="emp-avatar av-tuan">T</div><div class="emp-body"><div class="emp-top"><div><div class="emp-name">Tuấn</div><div class="emp-role">Developer · Lập trình viên</div></div><span class="chip recent">Vừa hoạt động</span></div><p class="emp-note">Phụ trách lập trình. Việc tiếp theo: Thiết kế lại giao diện phòng họp.</p></div></article>
+
+          <article class="card emp-card"><div class="emp-avatar av-linh">L</div><div class="emp-body"><div class="emp-top"><div><div class="emp-name">Linh</div><div class="emp-role">Tester · Kiểm thử viên</div></div><span class="chip off">Chưa từng vào phòng họp</span></div><p class="emp-note">Phụ trách kiểm thử chất lượng. Việc đang chờ nhận: Kiểm thử luồng đăng nhập.</p></div></article>
+        </div>
+
+        <aside class="card activity">
+          <div class="section-title">Hoạt động gần đây</div><div class="section-sub">Cập nhật mới nhất từ đội</div>
+          <div class="activity-list">
+            <div class="activity-item"><div class="act-dot av-muse">M</div><div><p><b>Muse</b> đã hoàn thành việc “Dựng phòng họp trực tuyến”.</p><time>12 phút trước</time></div></div>
+            <div class="activity-item"><div class="act-dot av-hung">H</div><div><p><b>Hùng</b> cập nhật tiến độ “Lên kế hoạch phân công đội dự án” lên 40%.</p><time>28 phút trước</time></div></div>
+            <div class="activity-item"><div class="act-dot av-chung">C</div><div><p><b>Chung</b> nhắn trong phòng họp: kiểm tra phòng họp 5 phút một lần.</p><time>42 phút trước</time></div></div>
+            <div class="activity-item"><div class="act-dot av-tuan">T</div><div><p><b>Tuấn</b> đã sẵn sàng nhận việc “Thiết kế lại giao diện phòng họp”.</p><time>1 giờ trước</time></div></div>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;margin-top:16px" onclick="switchTab('work')">Xem bảng công việc</button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 2. SƠ ĐỒ -->
+    <section class="view" id="view-org">
+      <div class="page-head"><div><h3>Sơ đồ tổ chức</h3><p>Cấu trúc đội ngũ Enteesee — gọn, rõ, đúng người đúng việc.</p></div></div>
+      <div class="card org">
+        <div class="org-root">
+          <div class="org-box primary"><strong>Chung</strong><span>Giám đốc</span></div>
+          <div class="org-line"></div>
+          <div class="org-box"><strong>Muse</strong><span>Phó giám đốc điều hành</span></div>
+          <div class="org-line"></div>
+          <div class="org-branch">
+            <div class="org-child"><div class="org-line"></div><div class="org-box"><strong>Hùng</strong><span>Trưởng phòng</span></div></div>
+            <div class="org-child"><div class="org-line"></div><div class="org-box"><strong>Tuấn</strong><span>Developer</span></div></div>
+            <div class="org-child"><div class="org-line"></div><div class="org-box"><strong>Linh</strong><span>Tester</span></div></div>
+          </div>
+        </div>
+        <p style="margin-top:24px;font-size:13px;color:var(--sub)">Hùng quản lý dự án · Tuấn phụ trách lập trình · Linh phụ trách kiểm thử — tất cả báo cáo qua Muse tới Giám đốc.</p>
+      </div>
+    </section>
+
+    <!-- 3. PHÒNG HỌP -->
+    <section class="view" id="view-meeting">
+      <div class="page-head"><div><h3>Phòng họp</h3><p>Nơi cả đội trao đổi và nhận việc. Tin nhắn giao việc được làm nổi bật để không ai bỏ lỡ.</p></div><span class="chip on">3 đang hoạt động</span></div>
+      <div class="card chat-card">
+        <div class="chat-head"><div class="avatar av-muse">M</div><div style="flex:1"><strong style="font-size:15px;display:block;line-height:1.2">Phòng Họp &amp; Điều Hành</strong><span style="font-size:13px;color:var(--sub)">Chung, Muse, Hùng, Tuấn, Linh · 5 thành viên</span></div><span class="chip on">Đang mở</span></div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg"><div class="avatar av-hung">H</div><div class="msg-bubble"><div class="msg-meta"><strong>Hùng</strong><span>08:12</span></div><p>Hùng, phụ trách quản lý dự án, đã sẵn sàng.</p></div></div>
+          <div class="msg"><div class="avatar av-tuan">T</div><div class="msg-bubble"><div class="msg-meta"><strong>Tuấn</strong><span>08:14</span></div><p>Tuấn, phụ trách lập trình, đã sẵn sàng.</p></div></div>
+          <div class="msg"><div class="avatar av-chung">C</div><div class="msg-bubble"><div class="msg-meta"><strong>Chung</strong><span>08:16 · Giám đốc</span></div><p>Chào cả đội, từ nay kiểm tra phòng họp 5 phút một lần nhé.</p></div></div>
+          <div class="msg"><div class="avatar av-muse">M</div><div class="msg-bubble"><div class="msg-meta"><strong>Muse</strong><span>08:21 · Phó giám đốc</span></div><p>Báo cáo tiến độ: phòng họp trực tuyến đã dựng xong. Hùng đang lên kế hoạch phân công đội dự án, đạt 40%. Hai việc mới đang chờ Tuấn và Linh nhận.</p></div></div>
+          <div class="msg-assign"><div class="msg-assign-head"><span class="tag-assign">Giao việc</span><span style="font-size:12px;color:var(--sub);font-weight:700">Muse giao · 08:22</span></div><h4>Lên kế hoạch phân công đội dự án</h4><p>Giao cho <b>Hùng — Trưởng phòng</b>. Hoàn thiện bảng phân công, rõ người phụ trách và hạn chót cho từng đầu việc trong tuần này.</p><div class="msg-assign-foot"><span class="pill">Người phụ trách: Hùng</span><span class="pill">Tiến độ: 40%</span><span class="pill">Trạng thái: Đang làm</span></div></div>
+        </div>
+        <form class="chat-composer" onsubmit="sendMessage(event)">
+          <div class="composer-box">
+            <button type="button" class="attach-btn" aria-label="Đính kèm tệp"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 1 1 5.65 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+            <input id="chatInput" type="text" placeholder="Nhắn tin cho cả đội..." aria-label="Soạn tin nhắn">
+          </div>
+          <button type="submit" class="btn btn-primary send-btn">Gửi</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 4. CÔNG VIỆC -->
+    <section class="view" id="view-work">
+      <div class="page-head"><div><h3>Công việc</h3><p>Theo dõi từng đầu việc theo trạng thái — ai làm, tới đâu, khi nào xong.</p></div><button class="btn btn-primary">+ Việc mới</button></div>
+      <div class="kanban">
+        <div class="col"><div class="col-head"><span class="col-dot" style="background:#98A2B3"></span><h4>Chờ nhận</h4><span class="col-count">2</span></div>
+          <article class="task-card"><h5>Thiết kế lại giao diện phòng họp</h5><p>Làm mới giao diện theo phong cách app thân thiện, ưu tiên dễ đọc trên điện thoại.</p><div class="task-foot"><div class="mini-avatar av-tuan">T</div><span>Tuấn</span><time>Hạn: 23/10</time></div></article>
+          <article class="task-card"><h5>Kiểm thử luồng đăng nhập</h5><p>Kiểm tra đăng nhập, phiên làm việc và các trường hợp lỗi thường gặp.</p><div class="task-foot"><div class="mini-avatar av-linh">L</div><span>Linh</span><time>Hạn: 24/10</time></div></article>
+          <button class="add-btn">+ Thêm việc</button>
+        </div>
+        <div class="col"><div class="col-head"><span class="col-dot" style="background:var(--green)"></span><h4>Đang làm</h4><span class="col-count">1</span></div>
+          <article class="task-card"><h5>Lên kế hoạch phân công đội dự án</h5><p>Chia rõ đầu việc, người phụ trách và mốc thời gian cho toàn đội.</p><div class="task-progress"><div class="progress"><i style="width:40%"></i></div><div class="progress-meta"><span>Tiến độ</span><span>40%</span></div></div><div class="task-foot"><div class="mini-avatar av-hung">H</div><span>Hùng</span><time>Hạn: 22/10</time></div></article>
+        </div>
+        <div class="col"><div class="col-head"><span class="col-dot" style="background:#F79009"></span><h4>Chờ duyệt</h4><span class="col-count">1</span></div>
+          <article class="task-card"><h5>Duyệt kế hoạch phân công (bản nháp)</h5><p>Bản nháp đầu tiên của Hùng, chờ Giám đốc xem và phê duyệt trước khi triển khai.</p><div class="task-progress"><div class="progress"><i style="width:90%;background:#F79009"></i></div><div class="progress-meta"><span>Tiến độ</span><span>90%</span></div></div><div class="task-foot"><div class="mini-avatar av-chung">C</div><span>Chung duyệt</span><time>Hạn: 21/10</time></div></article>
+        </div>
+        <div class="col"><div class="col-head"><span class="col-dot" style="background:#6941C6"></span><h4>Hoàn thành</h4><span class="col-count">1</span></div>
+          <article class="task-card"><h5>Dựng phòng họp trực tuyến</h5><p>Thiết lập phòng họp, kênh trao đổi và quy tắc kiểm tra 5 phút một lần.</p><div class="task-progress"><div class="progress"><i style="width:100%"></i></div><div class="progress-meta"><span>Tiến độ</span><span>100%</span></div></div><div class="task-foot"><div class="mini-avatar av-muse">M</div><span>Muse</span><time>Xong: 20/10</time></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. NHÂN VIÊN -->
+    <section class="view" id="view-people">
+      <div class="page-head"><div><h3>Nhân viên</h3><p>5 thành viên — vai trò và trạng thái hiện diện trong phòng họp.</p></div><button class="btn btn-ghost">Mời thành viên</button></div>
+      <div class="card people-list">
+        <div class="person-row"><div class="avatar av-chung">C</div><div class="person-info"><strong>Chung</strong><span>Giám đốc</span></div><span class="chip on">Đang hoạt động</span></div>
+        <div class="person-row"><div class="avatar av-muse">M</div><div class="person-info"><strong>Muse</strong><span>Phó giám đốc điều hành</span></div><span class="chip on">Đang hoạt động</span></div>
+        <div class="person-row"><div class="avatar av-hung">H</div><div class="person-info"><strong>Hùng</strong><span>Trưởng phòng · Quản lý dự án</span></div><span class="chip recent">Vừa hoạt động</span></div>
+        <div class="person-row"><div class="avatar av-tuan">T</div><div class="person-info"><strong>Tuấn</strong><span>Developer · Lập trình viên</span></div><span class="chip recent">Vừa hoạt động</span></div>
+        <div class="person-row"><div class="avatar av-linh">L</div><div class="person-info"><strong>Linh</strong><span>Tester · Kiểm thử viên</span></div><span class="chip off">Chưa từng vào phòng họp</span></div>
+      </div>
+    </section>
+
+    <!-- 6. CÀI ĐẶT -->
+    <section class="view" id="view-settings">
+      <div class="page-head"><div><h3>Cài đặt</h3><p>Tuỳ chỉnh phòng họp và thông báo cho đội Enteesee.</p></div></div>
+      <div class="card settings">
+        <div class="setting-row"><div style="flex:1"><strong>Thông báo việc mới</strong><p>Báo ngay khi có việc được giao trong phòng họp.</p></div><button class="switch on" aria-label="Bật/tắt thông báo việc mới" onclick="this.classList.toggle('on')"></button></div>
+        <div class="setting-row"><div style="flex:1"><strong>Nhắc kiểm tra phòng họp</strong><p>Nhắc mỗi 5 phút theo quy định của Giám đốc.</p></div><button class="switch on" aria-label="Bật/tắt nhắc kiểm tra" onclick="this.classList.toggle('on')"></button></div>
+        <div class="setting-row"><div style="flex:1"><strong>Báo cáo tiến độ tự động</strong><p>Muse tổng hợp và gửi báo cáo vào cuối ngày.</p></div><button class="switch on" aria-label="Bật/tắt báo cáo tự động" onclick="this.classList.toggle('on')"></button></div>
+        <div class="setting-row"><div style="flex:1"><strong>Âm thanh tin nhắn</strong><p>Phát âm thanh nhẹ khi có tin nhắn mới.</p></div><button class="switch" aria-label="Bật/tắt âm thanh" onclick="this.classList.toggle('on')"></button></div>
+        <div class="setting-row"><div style="flex:1"><strong>Tên công ty</strong><p>Enteesee — Phòng Họp &amp; Điều Hành</p></div><button class="btn btn-ghost btn-sm">Chỉnh sửa</button></div>
+      </div>
+    </section>
+  </div></main>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Điều hướng chính">
+  <button class="bnav-item active" data-tab="overview"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>Tổng quan</button>
+  <button class="bnav-item" data-tab="org"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="16" width="6" height="6" rx="1.5"/><rect x="16" y="16" width="6" height="6" rx="1.5"/><path d="M12 8v4M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>Sơ đồ</button>
+  <button class="bnav-item" data-tab="meeting"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.6A8.5 8.5 0 1 1 21 11.5Z"/></svg>Phòng họp</button>
+  <button class="bnav-item" data-tab="work"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="10" rx="1.5"/></svg>Công việc</button>
+  <button class="bnav-item" data-tab="people"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5a3.5 3.5 0 0 1 0 6.6M17.5 14.2a6.5 6.5 0 0 1 4 5.8"/></svg>Nhân viên</button>
+  <button class="bnav-item" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Cài đặt</button>
+</nav>
+
+<script>
+var TITLES={overview:"Tổng quan",org:"Sơ đồ tổ chức",meeting:"Phòng họp",work:"Công việc",people:"Nhân viên",settings:"Cài đặt"};
+function switchTab(tab){
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active")});
+  var el=document.getElementById("view-"+tab); if(el) el.classList.add("active");
+  document.querySelectorAll("[data-tab]").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===tab)});
+  document.getElementById("topTitle").textContent=TITLES[tab]||"Enteesee";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-tab]").forEach(function(b){
+  b.addEventListener("click",function(){switchTab(b.getAttribute("data-tab"))});
+});
+function sendMessage(e){
+  e.preventDefault();
+  var input=document.getElementById("chatInput");
+  var text=input.value.trim(); if(!text) return;
+  var box=document.getElementById("chatMessages");
+  var now=new Date(); var hh=String(now.getHours()).padStart(2,"0"); var mm=String(now.getMinutes()).padStart(2,"0");
+  var wrap=document.createElement("div"); wrap.className="msg";
+  wrap.innerHTML='<div class="avatar av-chung">C</div><div class="msg-bubble"><div class="msg-meta"><strong>Chung</strong><span>'+hh+':'+mm+' · Giám đốc</span></div><p></p></div>';
+  wrap.querySelector("p").textContent=text;
+  box.appendChild(wrap); input.value=""; box.scrollTop=box.scrollHeight;
+}
+</script>
+</body>
+</html>
